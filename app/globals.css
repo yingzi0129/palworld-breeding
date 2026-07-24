@@ -48,6 +48,13 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .scroll-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
   .element-fire { color: #ef4444; }
   .element-water { color: #3b82f6; }
   .element-grass { color: #22c55e; }

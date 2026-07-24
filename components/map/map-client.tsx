@@ -84,24 +84,26 @@ export function MapClient({ pals }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="card flex flex-col gap-4 md:flex-row md:items-end">
-        <div className="flex-1">
-          <PalPicker pals={pals} selected={selectedPal} onSelect={setSelectedPal} label="Filter by Pal" />
+      <div className="relative z-50">
+        <div className="card flex flex-col gap-4 md:flex-row md:items-end">
+          <div className="flex-1">
+            <PalPicker pals={pals} selected={selectedPal} onSelect={setSelectedPal} label="Filter by Pal" />
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={showFastTravel}
+              onChange={(e) => setShowFastTravel(e.target.checked)}
+              className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-sky-600"
+            />
+            Show fast travel points
+          </label>
         </div>
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
-          <input
-            type="checkbox"
-            checked={showFastTravel}
-            onChange={(e) => setShowFastTravel(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-sky-600"
-          />
-          Show fast travel points
-        </label>
       </div>
 
       <div
         ref={wrapperRef}
-        className="relative h-[70vh] w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900"
+        className="relative z-0 h-[70vh] w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900"
         onClick={() => setHovered(null)}
       >
         <img
@@ -141,7 +143,7 @@ export function MapClient({ pals }: Props) {
             return (
               <button
                 key={`pal-${i}`}
-                className={`absolute z-20 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-slate-900 transition-transform hover:scale-110 ${
+                className={`absolute z-10 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-slate-900 transition-transform hover:scale-110 ${
                   active ? "scale-125 bg-red-300" : "bg-red-500"
                 }`}
                 style={{ left: pos.left, top: pos.top }}
@@ -156,14 +158,14 @@ export function MapClient({ pals }: Props) {
           })}
 
         {hovered?.type === "ft" && (
-          <div className="absolute left-1/2 top-4 z-30 -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
+          <div className="absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
           >
             Fast Travel: {FAST_TRAVEL[hovered.index].name}
           </div>
         )}
 
         {hovered?.type === "pal" && selectedPal && (
-          <div className="absolute left-1/2 top-4 z-30 max-w-xs -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
+          <div className="absolute left-1/2 top-4 z-20 max-w-xs -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
           >
             <div className="flex items-center gap-2 font-semibold">
               <Image src={getPalImageUrl(selectedPal)} alt={selectedPal.name} width={24} height={24} />
