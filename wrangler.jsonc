@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "palworld-breeding",
+  "compatibility_date": "2025-07-01",
+  "pages_build_output_dir": ".vercel/output/static",
+  "d1_databases": [
+    {
+      "binding": "PALWORLD_BREEDING_DB",
+      "database_name": "palworld-breeding-db",
+      "database_id": "62cfa5ed-53cc-4bf5-8d3e-5bbe46eaadf1"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "palworld-breeding-assets",
+      "binding": "PALWORLD_BREEDING_ASSETS"
+    }
+  ]
+}

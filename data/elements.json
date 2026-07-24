@@ -1,0 +1,47 @@
+[
+  {
+    "id": "Normal",
+    "name": "Neutral",
+    "internalName": "Normal"
+  },
+  {
+    "id": "Fire",
+    "name": "Fire",
+    "internalName": "Fire"
+  },
+  {
+    "id": "Water",
+    "name": "Water",
+    "internalName": "Water"
+  },
+  {
+    "id": "Leaf",
+    "name": "Grass",
+    "internalName": "Leaf"
+  },
+  {
+    "id": "Electricity",
+    "name": "Electric",
+    "internalName": "Electricity"
+  },
+  {
+    "id": "Ice",
+    "name": "Ice",
+    "internalName": "Ice"
+  },
+  {
+    "id": "Earth",
+    "name": "Ground",
+    "internalName": "Earth"
+  },
+  {
+    "id": "Dark",
+    "name": "Dark",
+    "internalName": "Dark"
+  },
+  {
+    "id": "Dragon",
+    "name": "Dragon",
+    "internalName": "Dragon"
+  }
+]
