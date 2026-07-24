@@ -42,6 +42,20 @@ body {
   .input {
     @apply w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30;
   }
+  .suggestion-list {
+    @apply fixed z-[100] w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl;
+  }
+  .suggestion-item {
+    @apply flex w-full min-h-[56px] items-center gap-3 px-4 py-3 text-left transition;
+  }
+  .suggestion-item:hover,
+  .suggestion-item[data-highlighted="true"] {
+    @apply bg-slate-700;
+  }
+  .suggestion-item:hover .suggestion-item-name,
+  .suggestion-item[data-highlighted="true"] .suggestion-item-name {
+    @apply text-white;
+  }
 }
 
 @layer utilities {
@@ -49,11 +63,18 @@ body {
     text-wrap: balance;
   }
   .scroll-hidden {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    -ms-overflow-style: auto;
+    scrollbar-width: thin;
   }
   .scroll-hidden::-webkit-scrollbar {
-    display: none;
+    width: 8px;
+  }
+  .scroll-hidden::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+  }
+  .scroll-hidden::-webkit-scrollbar-track {
+    background: transparent;
   }
   .element-fire { color: #ef4444; }
   .element-water { color: #3b82f6; }

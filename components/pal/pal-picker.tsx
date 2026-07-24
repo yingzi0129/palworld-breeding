@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import Image from "next/image";
 import type { Pal } from "@/lib/types";
 import { getPalImageUrl } from "@/lib/data-client";
@@ -27,6 +27,8 @@ export function PalPicker({
   const listRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const justSelectedRef = useRef(false);
+  const [dropdownStyle, setDropdownStyle] = useState<{ left: number; top: number; width: number; maxHeight: number }>({ left: 0, top: 0, width: 0, maxHeight: 384 });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -40,6 +42,45 @@ export function PalPicker({
       )
       .slice(0, 20);
   }, [pals, query]);
+
+  const updateDropdownPosition = useCallback(() => {
+    if (!containerRef.current || !open) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const listMaxHeight = 384; // max-h-96
+    const spaceBelow = viewportHeight - rect.bottom;
+    const padding = 8;
+    let top = rect.bottom + padding;
+    let maxHeight = listMaxHeight;
+    if (spaceBelow < listMaxHeight + padding) {
+      const spaceAbove = rect.top - padding;
+      if (spaceAbove >= listMaxHeight + padding) {
+        top = Math.max(padding, rect.top - listMaxHeight - padding);
+      } else if (spaceAbove > spaceBelow) {
+        maxHeight = Math.max(120, spaceAbove - padding);
+        top = Math.max(padding, rect.top - maxHeight - padding);
+      } else {
+        maxHeight = Math.max(120, spaceBelow - padding);
+      }
+    }
+    setDropdownStyle({ left: rect.left, top, width: rect.width, maxHeight });
+  }, [open]);
+
+  useLayoutEffect(() => {
+    updateDropdownPosition();
+  }, [open, updateDropdownPosition]);
+
+  useEffect(() => {
+    function handleResize() {
+      updateDropdownPosition();
+    }
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleResize, true);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleResize, true);
+    };
+  }, [updateDropdownPosition]);
 
   useEffect(() => {
     setHighlightIndex(0);
@@ -73,10 +114,14 @@ export function PalPicker({
 
   const selectPal = useCallback(
     (pal: Pal) => {
+      justSelectedRef.current = true;
       onSelect(pal);
       setOpen(false);
       setQuery("");
       setHighlightIndex(0);
+      setTimeout(() => {
+        justSelectedRef.current = false;
+      }, 200);
     },
     [onSelect]
   );
@@ -113,6 +158,15 @@ export function PalPicker({
     [open, filtered, highlightIndex, selectPal]
   );
 
+  const handleInputFocus = useCallback(() => {
+    if (justSelectedRef.current) return;
+    setOpen(true);
+  }, []);
+
+  const handleInputMouseDown = useCallback(() => {
+    setOpen((prev) => !prev);
+  }, []);
+
   const displayValue = selected ? selected.name : query;
 
   return (
@@ -123,7 +177,7 @@ export function PalPicker({
 
       <div className="relative">
         <svg
-          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -144,7 +198,8 @@ export function PalPicker({
           aria-activedescendant={open ? `pal-option-${highlightIndex}` : undefined}
           value={displayValue}
           onChange={handleInputChange}
-          onFocus={() => setOpen(true)}
+          onFocus={handleInputFocus}
+          onMouseDown={handleInputMouseDown}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="input pl-12 pr-10"
@@ -163,23 +218,30 @@ export function PalPicker({
             ✕
           </button>
         ) : (
-          open && (
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-xs text-slate-500 hover:bg-slate-700 hover:text-slate-300"
-              aria-label="Close suggestions"
-            >
-              ▲
-            </button>
-          )
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-xs text-slate-500 hover:bg-slate-700 hover:text-slate-300"
+            aria-label="Toggle suggestions"
+            aria-expanded={open}
+          >
+            {open ? "▲" : "▼"}
+          </button>
         )}
 
         {open && (
           <div
             ref={listRef}
             id="pal-picker-list"
-            className="absolute z-50 mt-2 max-h-80 w-full overflow-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl scroll-hidden"
+            className="suggestion-list scroll-hidden"
+            style={{
+              position: "fixed",
+              left: dropdownStyle.left,
+              top: dropdownStyle.top,
+              width: dropdownStyle.width,
+              maxWidth: dropdownStyle.width,
+              maxHeight: dropdownStyle.maxHeight,
+            }}
           >
             {filtered.length === 0 ? (
               <div className="px-4 py-3 text-sm text-slate-500">No Pals found.</div>
@@ -192,24 +254,24 @@ export function PalPicker({
                     id={`pal-option-${i}`}
                     ref={(el: HTMLButtonElement | null) => { itemRefs.current[i] = el; }}
                     type="button"
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => selectPal(p)}
                     onMouseEnter={() => setHighlightIndex(i)}
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left transition ${
-                      highlighted ? "bg-slate-700" : "hover:bg-slate-800"
-                    }`}
+                    data-highlighted={highlighted}
+                    className="suggestion-item"
                   >
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-800">
                       <Image
                         src={getPalImageUrl(p)}
                         alt={p.name}
                         fill
                         className="object-contain p-1"
-                        sizes="40px"
+                        sizes="48px"
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-slate-200">{p.name}</div>
-                      <div className="text-xs text-slate-500">
+                      <div className="suggestion-item-name truncate text-base font-medium text-slate-200">{p.name}</div>
+                      <div className="text-sm text-slate-500">
                         #{p.number} · {p.elements.join(", ")}
                       </div>
                     </div>

@@ -88,7 +88,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Link
             href="/pals"
-            className="rounded-full border border-slate-700 bg-slate-800/80 px-4 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800 no-underline"
+            className="hidden rounded-full border border-slate-700 bg-slate-800/80 px-4 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800 no-underline md:inline-flex"
           >
             Search...
           </Link>
