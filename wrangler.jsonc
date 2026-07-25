@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "palworld-breeding",
   "compatibility_date": "2025-07-01",
+  "compatibility_flags": ["nodejs_compat"],
   "pages_build_output_dir": ".vercel/output/static",
   "d1_databases": [
     {
