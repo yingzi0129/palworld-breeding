@@ -43,7 +43,7 @@ body {
     @apply w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30;
   }
   .pal-picker-dropdown {
-    @apply fixed z-[100] w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl;
+    @apply z-50 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl;
   }
   .pal-picker-option {
     @apply flex w-full min-h-[56px] items-center gap-3 px-4 py-3 text-left transition;

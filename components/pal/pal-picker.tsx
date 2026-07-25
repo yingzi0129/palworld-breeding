@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import type { Pal } from "@/lib/types";
 import { getPalImageUrl } from "@/lib/data-client";
@@ -24,15 +23,12 @@ export function PalPicker({
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const justSelectedRef = useRef(false);
-  const [dropdownStyle, setDropdownStyle] = useState<{ left: number; top: number; width: number; maxHeight: number }>({ left: 0, top: 0, width: 0, maxHeight: 384 });
-
-  useEffect(() => setMounted(true), []);
+  const [dropdownStyle, setDropdownStyle] = useState<{ maxHeight: number }>({ maxHeight: 320 });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -55,27 +51,14 @@ export function PalPicker({
     const padding = 8;
     const spaceBelow = viewportHeight - rect.bottom - padding;
     const spaceAbove = rect.top - padding;
-    let top = rect.bottom + padding;
     let maxHeight = listMaxHeight;
-    let placement: "below" | "above" = "below";
 
-    if (spaceBelow < listMaxHeight) {
-      if (spaceAbove >= listMaxHeight) {
-        top = Math.max(padding, rect.top - listMaxHeight - padding);
-        placement = "above";
-      } else if (spaceAbove > spaceBelow) {
-        maxHeight = Math.max(140, spaceAbove - padding);
-        top = Math.max(padding, rect.top - maxHeight - padding);
-        placement = "above";
-      } else {
-        maxHeight = Math.max(140, spaceBelow);
-        placement = "below";
-      }
+    if (spaceBelow < listMaxHeight && spaceAbove > spaceBelow) {
+      maxHeight = Math.max(140, Math.min(listMaxHeight, spaceAbove - padding));
+    } else {
+      maxHeight = Math.max(140, Math.min(listMaxHeight, spaceBelow));
     }
-    setDropdownStyle({ left: rect.left, top, width: rect.width, maxHeight });
-    if (listRef.current) {
-      listRef.current.dataset.placement = placement;
-    }
+    setDropdownStyle({ maxHeight });
   }, [open]);
 
   useLayoutEffect(() => {
@@ -182,18 +165,12 @@ export function PalPicker({
 
   const displayValue = selected ? selected.name : query;
 
-  const dropdown = open && mounted && (
+  const dropdown = open && (
     <div
       ref={listRef}
       id="pal-picker-list"
-      data-placement="below"
-      className="pal-picker-dropdown scroll-thin"
+      className="pal-picker-dropdown scroll-thin absolute left-0 right-0 top-full z-50 mt-2 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
       style={{
-        position: "fixed",
-        left: dropdownStyle.left,
-        top: dropdownStyle.top,
-        width: dropdownStyle.width,
-        maxWidth: dropdownStyle.width,
         maxHeight: dropdownStyle.maxHeight,
       }}
     >
@@ -240,7 +217,7 @@ export function PalPicker({
   );
 
   return (
-    <div className="space-y-2 text-left" ref={containerRef}>
+    <div className="relative space-y-2 text-left" ref={containerRef}>
       {label && (
         <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">{label}</label>
       )}
@@ -299,7 +276,7 @@ export function PalPicker({
           </button>
         )}
       </div>
-      {dropdown && createPortal(dropdown, document.body)}
+      {dropdown}
     </div>
   );
 }
