@@ -17,44 +17,46 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#020617]">
-      {/* Map background — pre-cropped hero image with strong land/sea contrast */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/map/palworld-map-hero-bg.jpg')",
-          filter: "brightness(1.1) contrast(1.05)",
-        }}
-      />
-
-      {/* Dark gradient overlay — light enough so the cropped map stays visible */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#020617]/40 via-[#020617]/30 to-[#020617]/75" />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#020617]/30 via-transparent to-[#020617]/30" />
-
-      {/* Atmospheric glow */}
-      <div className="pointer-events-none absolute inset-0 -z-10 blur-3xl">
-        <div className="absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-red-600/12" />
-        <div className="absolute right-1/4 top-1/4 h-[32rem] w-[32rem] rounded-full bg-blue-600/8" />
-        <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-purple-600/8" />
-      </div>
-
       <main className="pt-10">
         {/* Hero */}
-        <section className="relative mx-auto max-w-[1440px] px-6 py-16 text-center md:px-12 md:py-24">
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-2xl md:text-6xl">
-            Palworld Breeding Calculator
-            <br className="hidden md:block" />{" "}
-            <span className="text-red-500">&amp; Interactive Map</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-300 drop-shadow md:text-xl">
-            Plan your perfect Pal the easy way. Calculate combos, optimize passive skill inheritance, find the shortest breeding path, and track spawn locations — all in one friendly spot.
-          </p>
+        <section className="relative overflow-hidden text-center">
+          {/* Map background — pre-cropped hero image with strong land/sea contrast */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: "url('/map/palworld-map-hero-bg.jpg')",
+              filter: "brightness(1.1) contrast(1.05)",
+            }}
+          />
 
-          {/* Main tool box */}
-          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/60 shadow-2xl backdrop-blur-xl">
-            <Tabs labels={["Forward: Select parents → child", "Reverse: Target Pal → parents"]}>
-              <ForwardCalculator pals={pals} />
-              <ReverseCalculator pals={pals} />
-            </Tabs>
+          {/* Dark gradient overlay — light enough so the cropped map stays visible */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#020617]/40 via-[#020617]/30 to-[#020617]/75" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020617]/30 via-transparent to-[#020617]/30" />
+
+          {/* Atmospheric glow */}
+          <div className="pointer-events-none absolute inset-0 blur-3xl">
+            <div className="absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-red-600/12" />
+            <div className="absolute right-1/4 top-1/4 h-[32rem] w-[32rem] rounded-full bg-blue-600/8" />
+            <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-purple-600/8" />
+          </div>
+
+          <div className="relative mx-auto max-w-[1440px] px-6 py-16 md:px-12 md:py-24">
+            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-2xl md:text-6xl">
+              Palworld Breeding Calculator
+              <br className="hidden md:block" />{" "}
+              <span className="text-red-500">&amp; Interactive Map</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-300 drop-shadow md:text-xl">
+              Plan your perfect Pal the easy way. Calculate combos, optimize passive skill inheritance, find the shortest breeding path, and track spawn locations — all in one friendly spot.
+            </p>
+
+            {/* Main tool box */}
+            <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/60 shadow-2xl backdrop-blur-xl">
+              <Tabs labels={["Forward: Select parents → child", "Reverse: Target Pal → parents"]}>
+                <ForwardCalculator pals={pals} />
+                <ReverseCalculator pals={pals} />
+              </Tabs>
+            </div>
           </div>
         </section>
 
