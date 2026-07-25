@@ -6,10 +6,10 @@ import { PalPicker } from "@/components/pal/pal-picker";
 import type { Pal } from "@/lib/types";
 import { getPalImageUrl } from "@/lib/data-client";
 
-interface BreedingGraph {
-  nodes: Record<string, { name: string; slug: string; breedingPower: number; rarity: number }>;
-  adj: Record<string, string[]>;
-  childPairs: Record<string, [string, string][]>;
+interface CompactGraph {
+  n: [string, string, string, number, number][]; // [name, slug, internalName, bp, rarity]
+  a: number[][];                                  // adjacency list
+  p: number[][][];                                // child -> parent index pairs
 }
 
 interface PathStep {
@@ -24,17 +24,18 @@ interface SearchResult {
   generations: number;
 }
 
-function graphNodeToPal(internalName: string, node: BreedingGraph["nodes"][string]): Pal {
+function graphNodeToPal(graph: CompactGraph, idx: number): Pal {
+  const [name, slug, palInternalName, bp, r] = graph.n[idx];
   return {
-    id: internalName,
-    name: node.name,
-    internalName,
-    slug: node.slug,
+    id: palInternalName,
+    name,
+    internalName: palInternalName,
+    slug,
     number: 0,
     isVariant: false,
-    breedingPower: node.breedingPower,
+    breedingPower: bp,
     breedingPowerPriority: 0,
-    rarity: node.rarity,
+    rarity: r,
     nocturnal: false,
     stats: { hp: 0, attack: 0, defense: 0 },
     partnerSkill: null,
@@ -44,52 +45,60 @@ function graphNodeToPal(internalName: string, node: BreedingGraph["nodes"][strin
     elements: [],
     description: "",
     imageUrl: null,
-    imageKey: `pals/${node.slug}.webp`,
+    imageKey: `pals/${slug}.webp`,
   };
 }
 
-function findShortestPath(graph: BreedingGraph, startInternal: string, targetInternal: string): SearchResult | null {
-  if (startInternal === targetInternal) return { steps: [], generations: 0 };
+function findShortestPath(graph: CompactGraph, startIdx: number, targetIdx: number): SearchResult | null {
+  if (startIdx === targetIdx) return { steps: [], generations: 0 };
 
-  const queue: string[] = [startInternal];
-  const prev: Record<string, string | null> = { [startInternal]: null };
+  const queue: number[] = [startIdx];
+  const prev: (number | null)[] = new Array(graph.n.length).fill(null);
+  prev[startIdx] = -1;
 
   while (queue.length > 0) {
     const u = queue.shift()!;
-    for (const v of graph.adj[u] || []) {
-      if (!(v in prev)) {
+    for (const v of graph.a[u] || []) {
+      if (prev[v] === null) {
         prev[v] = u;
-        if (v === targetInternal) break;
+        if (v === targetIdx) {
+          queue.length = 0;
+          break;
+        }
         queue.push(v);
       }
     }
   }
 
-  if (!(targetInternal in prev)) return null;
+  if (prev[targetIdx] === null) return null;
 
-  const path: string[] = [];
-  let cur: string | null = targetInternal;
-  while (cur) {
+  const path: number[] = [];
+  let cur: number = targetIdx;
+  while (cur !== -1) {
     path.unshift(cur);
-    cur = prev[cur];
+    cur = prev[cur] as number;
   }
 
   const steps: PathStep[] = [];
   for (let i = 0; i < path.length - 1; i++) {
-    const parentInternal = path[i];
-    const childInternal = path[i + 1];
-    const pairs = graph.childPairs[childInternal] || [];
-    const pair = pairs.find((p) => p[0] === parentInternal || p[1] === parentInternal);
-    const mateInternal = pair ? (pair[0] === parentInternal ? pair[1] : pair[0]) : null;
-    if (!mateInternal) return null;
+    const parentIdx = path[i];
+    const childIdx = path[i + 1];
+    const pairs = graph.p[childIdx] || [];
+    const pair = pairs.find((p) => p[0] === parentIdx || p[1] === parentIdx);
+    const mateIdx = pair ? (pair[0] === parentIdx ? pair[1] : pair[0]) : null;
+    if (mateIdx === null) return null;
 
-    const parentA = graphNodeToPal(parentInternal, graph.nodes[parentInternal]);
-    const parentB = graphNodeToPal(mateInternal, graph.nodes[mateInternal]);
-    const child = graphNodeToPal(childInternal, graph.nodes[childInternal]);
+    const parentA = graphNodeToPal(graph, parentIdx);
+    const parentB = graphNodeToPal(graph, mateIdx);
+    const child = graphNodeToPal(graph, childIdx);
     steps.push({ parentA, parentB, child, generation: i + 1 });
   }
 
   return { steps, generations: steps.length };
+}
+
+function findIndexByInternalName(graph: CompactGraph, internalName: string): number {
+  return graph.n.findIndex((n) => n[2] === internalName);
 }
 
 interface Props {
@@ -97,7 +106,7 @@ interface Props {
 }
 
 export function ShortestPathClient({ pals }: Props) {
-  const [graph, setGraph] = useState<BreedingGraph | null>(null);
+  const [graph, setGraph] = useState<CompactGraph | null>(null);
   const [graphError, setGraphError] = useState(false);
   const [start, setStart] = useState<Pal | null>(null);
   const [target, setTarget] = useState<Pal | null>(null);
@@ -111,7 +120,7 @@ export function ShortestPathClient({ pals }: Props) {
         if (!r.ok) throw new Error("failed");
         return r.json();
       })
-      .then((data: BreedingGraph) => setGraph(data))
+      .then((data: CompactGraph) => setGraph(data))
       .catch(() => setGraphError(true));
   }, []);
 
@@ -122,11 +131,15 @@ export function ShortestPathClient({ pals }: Props) {
 
   function handleFind() {
     if (!graph || !start || !target) return;
+    const startIdx = findIndexByInternalName(graph, start.internalName);
+    const targetIdx = findIndexByInternalName(graph, target.internalName);
+    if (startIdx === -1 || targetIdx === -1) return;
+
     setLoading(true);
     setResult(undefined);
 
     const t0 = performance.now();
-    const res = findShortestPath(graph, start.internalName, target.internalName);
+    const res = findShortestPath(graph, startIdx, targetIdx);
     const t1 = performance.now();
 
     setResult(res);
