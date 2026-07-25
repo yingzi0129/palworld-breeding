@@ -115,13 +115,20 @@ export function ShortestPathClient({ pals }: Props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/breeding-graph.json")
-      .then((r) => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const r = await fetch("/breeding-graph.json");
         if (!r.ok) throw new Error("failed");
-        return r.json();
-      })
-      .then((data: CompactGraph) => setGraph(data))
-      .catch(() => setGraphError(true));
+        const data: CompactGraph = await r.json();
+        if (!cancelled) setGraph(data);
+      } catch (e) {
+        console.error("Breeding graph load failed", e);
+        if (!cancelled) setGraphError(true);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   const isLegendary = useMemo(() => {
