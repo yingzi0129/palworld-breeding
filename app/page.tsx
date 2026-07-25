@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { getPals } from "@/lib/data-server";
 import { Tabs } from "@/components/ui/tabs";
 import { ForwardCalculator } from "@/components/calculator/forward-calculator";
@@ -29,33 +31,103 @@ export default function HomePage() {
             }}
           />
 
-          {/* Dark gradient overlay — light enough so the cropped map stays visible */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#020617]/40 via-[#020617]/30 to-[#020617]/75" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020617]/30 via-transparent to-[#020617]/30" />
+          {/* Dark gradient overlay — keeps map visible but readable */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#020617]/45 via-[#020617]/35 to-[#020617]/80" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020617]/40 via-transparent to-[#020617]/40" />
+
+          {/* Floating light orbs — game world fast-travel beacons */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute left-[12%] top-[22%] h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_35px_10px_rgba(34,211,238,0.45)] animate-pulse" />
+            <div className="absolute right-[18%] top-[16%] h-2.5 w-2.5 rounded-full bg-amber-400 shadow-[0_0_40px_12px_rgba(251,191,36,0.4)] animate-pulse" style={{ animationDelay: "1.2s" }} />
+            <div className="absolute bottom-[38%] left-[8%] h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_30px_9px_rgba(52,211,153,0.42)] animate-pulse" style={{ animationDelay: "0.6s" }} />
+            <div className="absolute right-[10%] top-[42%] h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_30px_9px_rgba(192,132,252,0.38)] animate-pulse" style={{ animationDelay: "2s" }} />
+            <div className="absolute bottom-[28%] right-[22%] h-1.5 w-1.5 rounded-full bg-red-400 shadow-[0_0_25px_8px_rgba(248,113,113,0.35)] animate-pulse" style={{ animationDelay: "0.3s" }} />
+          </div>
+
+          {/* Real Pal artwork — left Frostallion, right Jetragon */}
+          <div className="pointer-events-none absolute -left-12 bottom-0 hidden opacity-[0.18] mix-blend-screen blur-[2px] brightness-110 lg:block xl:-left-6">
+            <Image
+              src="/images/hero/frostallion.webp"
+              alt=""
+              width={420}
+              height={420}
+              className="h-auto w-[18rem] xl:w-[22rem]"
+              aria-hidden="true"
+              priority
+            />
+          </div>
+          <div className="pointer-events-none absolute -right-10 bottom-0 hidden opacity-[0.20] mix-blend-screen blur-[1px] brightness-110 lg:block xl:-right-4">
+            <Image
+              src="/images/hero/jetragon.webp"
+              alt=""
+              width={460}
+              height={460}
+              className="h-auto w-[20rem] xl:w-[24rem]"
+              aria-hidden="true"
+              priority
+            />
+          </div>
 
           {/* Atmospheric glow */}
           <div className="pointer-events-none absolute inset-0 blur-3xl">
-            <div className="absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-red-600/12" />
-            <div className="absolute right-1/4 top-1/4 h-[32rem] w-[32rem] rounded-full bg-blue-600/8" />
-            <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-purple-600/8" />
+            <div className="absolute left-1/2 top-0 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-red-600/16" />
+            <div className="absolute right-1/4 top-1/4 h-[36rem] w-[36rem] rounded-full bg-blue-600/12" />
+            <div className="absolute bottom-0 left-1/3 h-[28rem] w-[28rem] rounded-full bg-purple-600/12" />
           </div>
 
           <div className="relative mx-auto max-w-[1440px] px-6 py-16 md:px-12 md:py-24">
+            {/* Fan-made badge */}
+            <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/60 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.6)]" />
+              Fan-made Palworld companion
+            </div>
+
+            {/* Glowing egg badge */}
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 p-[2px] shadow-[0_0_45px_14px_rgba(249,115,22,0.32)] animate-float">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-[#0a0f24]">
+                <EggIcon className="h-8 w-8 text-orange-400" />
+              </div>
+            </div>
+
             <h1 className="font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-2xl md:text-6xl">
               Palworld Breeding Calculator
               <br className="hidden md:block" />{" "}
-              <span className="text-red-500">&amp; Interactive Map</span>
+              <span className="bg-gradient-to-r from-red-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+                &amp; Interactive Map
+              </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-300 drop-shadow md:text-xl">
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-slate-300 drop-shadow md:text-xl">
               Plan your perfect Pal the easy way. Calculate combos, optimize passive skill inheritance, find the shortest breeding path, and track spawn locations — all in one friendly spot.
             </p>
 
-            {/* Main tool box */}
-            <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/60 shadow-2xl backdrop-blur-xl">
-              <Tabs labels={["Forward: Select parents → child", "Reverse: Target Pal → parents"]}>
-                <ForwardCalculator pals={pals} />
-                <ReverseCalculator pals={pals} />
-              </Tabs>
+            {/* Game-style stat capsules with SVG icons */}
+            <div className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-3">
+              <StatCapsule icon={<PawIcon className="h-4 w-4" />} label="299 Pals" />
+              <StatCapsule icon={<LinkIcon className="h-4 w-4" />} label="44,851+ Combos" />
+              <StatCapsule icon={<MapPinIcon className="h-4 w-4" />} label="Spawn Map" />
+              <StatCapsule icon={<SparkleIcon className="h-4 w-4" />} label="Passive Skills" />
+            </div>
+
+            {/* Main tool box — in-game terminal feel */}
+            <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-700/50 bg-[#0B1120]/85 shadow-[0_0_60px_-12px_rgba(249,115,22,0.18)] backdrop-blur-xl">
+              {/* Terminal header accent */}
+              <div className="relative h-1.5 w-full overflow-hidden bg-slate-800">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-amber-500 via-emerald-400 to-blue-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </div>
+              {/* Corner screws + panel frame */}
+              <div className="border-x border-b border-slate-700/40 p-1.5">
+                <div className="relative rounded-xl border border-slate-700/40 bg-slate-900/55 px-3 pb-3 pt-2">
+                  <div className="pointer-events-none absolute left-2 top-2 h-1.5 w-1.5 rounded-full bg-slate-600" />
+                  <div className="pointer-events-none absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-slate-600" />
+                  <div className="pointer-events-none absolute bottom-2 left-2 h-1.5 w-1.5 rounded-full bg-slate-600" />
+                  <div className="pointer-events-none absolute bottom-2 right-2 h-1.5 w-1.5 rounded-full bg-slate-600" />
+                  <Tabs labels={["Forward: Select parents → child", "Reverse: Target Pal → parents"]}>
+                    <ForwardCalculator pals={pals} />
+                    <ReverseCalculator pals={pals} />
+                  </Tabs>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -227,5 +299,59 @@ function Step({ number, title, description }: { number: number; title: string; d
       <h4 className="mb-2 text-lg font-bold text-white">{title}</h4>
       <p className="text-sm text-slate-400">{description}</p>
     </div>
+  );
+}
+
+function StatCapsule({ icon, label }: { icon: ReactNode; label: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/60 px-4 py-1.5 text-sm font-semibold text-slate-200 shadow-sm backdrop-blur-sm">
+      <span className="text-slate-400">{icon}</span>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function EggIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 2C7.5 2 4 7.5 4 13c0 3.5 2.5 7 8 7s8-3.5 8-7C20 7.5 16.5 2 12 2zm0 2c2.5 0 5 3.5 5.5 7.5-1-.5-2.5-1-5.5-1s-4.5.5-5.5 1C7 7.5 9.5 4 12 4z" />
+    </svg>
+  );
+}
+
+function PawIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4.5 2c-1.5 0-2.5-1.2-2.5-2.5S6 7 7.5 7 10 8.2 10 9.5 9 12 7.5 12zm9 0c-1.5 0-2.5-1.2-2.5-2.5S15 7 16.5 7 19 8.2 19 9.5 17.8 12 16.5 12zM6 15c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm12 0c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm-6 3c-2.2 0-4 1.8-4 4h8c0-2.2-1.8-4-4-4z" />
+    </svg>
+  );
+}
+
+function LinkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
+    </svg>
+  );
+}
+
+function MapPinIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+    </svg>
+  );
+}
+
+function SparkleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" />
+    </svg>
   );
 }

@@ -169,13 +169,15 @@ export function PalPicker({
     <div
       ref={listRef}
       id="pal-picker-list"
-      className="pal-picker-dropdown scroll-thin absolute left-0 right-0 top-full z-50 mt-2 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
+      className="pal-picker-dropdown scroll-thin absolute left-0 top-full z-50 mt-2 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
       style={{
         maxHeight: dropdownStyle.maxHeight,
+        width: "max-content",
+        maxWidth: "min(100vw - 2rem, 480px)",
       }}
     >
       {filtered.length === 0 ? (
-        <div className="px-4 py-3 text-sm text-slate-500">No Pals found.</div>
+        <div className="px-5 py-4 text-sm text-slate-500">No Pals found.</div>
       ) : (
         filtered.map((p, i) => {
           const highlighted = i === highlightIndex;
@@ -191,23 +193,23 @@ export function PalPicker({
               data-highlighted={highlighted}
               className="pal-picker-option"
             >
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-800">
                 <Image
                   src={getPalImageUrl(p)}
                   alt={p.name}
                   fill
-                  className="object-contain p-1"
-                  sizes="48px"
+                  className="object-contain p-1.5"
+                  sizes="56px"
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="pal-picker-option-name truncate text-base font-medium text-slate-200">{p.name}</div>
+                <div className="pal-picker-option-name truncate text-lg font-semibold text-slate-200">{p.name}</div>
                 <div className="text-sm text-slate-500">
                   #{p.number} · {p.elements.join(", ")}
                 </div>
               </div>
               {highlighted && (
-                <span className="text-xs text-slate-500">↵</span>
+                <span className="text-sm text-slate-500">↵</span>
               )}
             </button>
           );

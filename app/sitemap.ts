@@ -4,53 +4,31 @@ import { getPals } from "@/lib/data-server";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://palworldbreeding.cc";
   const pals = getPals();
-  const seedSlugs = [
-    "anubis",
-    "jetragon",
-    "frostallion",
-    "shadowbeak",
-    "lamball",
-    "relaxaurus",
-    "mossanda",
-    "lyleen",
-    "penking",
-    "bushi",
-    "suzaku",
-    "blazamut",
-    "niteowl",
-    "lovander",
-    "wumpo-botan",
-  ];
 
   const staticRoutes = [
-    "/",
-    "/tools/shortest-path",
-    "/tools/passive-skill",
-    "/map",
-    "/guide",
-    "/privacy",
-    "/terms",
-    "/cookie-policy",
-    "/data-sources",
-  ].map((route) => ({
+    { route: "/", priority: 1.0 },
+    { route: "/tools/shortest-path", priority: 0.8 },
+    { route: "/tools/passive-skill", priority: 0.8 },
+    { route: "/map", priority: 0.8 },
+    { route: "/guide", priority: 0.8 },
+    { route: "/pals", priority: 0.8 },
+    { route: "/privacy", priority: 0.3 },
+    { route: "/terms", priority: 0.3 },
+    { route: "/cookie-policy", priority: 0.3 },
+    { route: "/data-sources", priority: 0.3 },
+  ].map(({ route, priority }) => ({
     url: `${base}${route}`,
     lastModified: new Date().toISOString(),
     changeFrequency: "weekly" as const,
-    priority: route === "/" ? 1 : 0.7,
+    priority,
   }));
 
-  const palRoutes = seedSlugs
-    .map((slug) => {
-      const pal = pals.find((p) => p.slug === slug);
-      if (!pal) return null;
-      return {
-        url: `${base}/pal/${pal.slug}`,
-        lastModified: new Date().toISOString(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      };
-    })
-    .filter(Boolean) as MetadataRoute.Sitemap;
+  const palRoutes = pals.map((pal) => ({
+    url: `${base}/pal/${pal.slug}`,
+    lastModified: new Date().toISOString(),
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+  }));
 
   return [...staticRoutes, ...palRoutes];
 }
