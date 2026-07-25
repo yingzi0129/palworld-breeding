@@ -17,21 +17,18 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#020617]">
-      {/* Map background — brighten and boost contrast so islands show through */}
+      {/* Map background — pre-cropped hero image with strong land/sea contrast */}
       <div
-        className="pointer-events-none absolute inset-0 -z-20 bg-no-repeat"
+        className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/map/palworld-map-bg.jpg')",
-          backgroundSize: "240% auto",
-          backgroundPosition: "50% 25%",
-          filter: "brightness(1.85) contrast(1.35) saturate(1.25)",
+          backgroundImage: "url('/map/palworld-map-hero-bg.jpg')",
+          filter: "brightness(1.1) contrast(1.05)",
         }}
       />
 
-      {/* Dark gradient overlay — keep center very light so the map stays readable */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#020617]/25 via-[#020617]/20 to-[#020617]/60" />
+      {/* Dark gradient overlay — light enough so the cropped map stays visible */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#020617]/40 via-[#020617]/30 to-[#020617]/75" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#020617]/30 via-transparent to-[#020617]/30" />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_transparent_0%,_#020617_80%)] opacity-40" />
 
       {/* Atmospheric glow */}
       <div className="pointer-events-none absolute inset-0 -z-10 blur-3xl">
