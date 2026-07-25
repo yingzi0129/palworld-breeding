@@ -113,4 +113,33 @@ for (const c of combos) {
 fs.writeFileSync(path.join(process.cwd(), 'data/combos.json'), JSON.stringify(combos, null, 2));
 fs.writeFileSync(path.join(process.cwd(), 'data/combos-by-child.json'), JSON.stringify(Object.fromEntries(childToParents), null, 2));
 
-console.log(`Generated ${pals.length} pals, ${passiveSkills.length} passives, ${combos.length} combos`);
+const adj = new Map();
+for (const c of combos) {
+  if (!adj.has(c.parentA)) adj.set(c.parentA, new Set());
+  if (!adj.has(c.parentB)) adj.set(c.parentB, new Set());
+  adj.get(c.parentA).add(c.child);
+  adj.get(c.parentB).add(c.child);
+}
+
+const graphNodes = {};
+for (const p of pals) {
+  graphNodes[p.internalName] = { name: p.name, slug: p.slug, breedingPower: p.breedingPower, rarity: p.rarity };
+}
+
+const graphAdj = {};
+for (const [parent, children] of adj) {
+  graphAdj[parent] = Array.from(children).sort();
+}
+
+const childPairs = {};
+for (const [child, pairs] of childToParents) {
+  childPairs[child] = pairs.map((p) => [p.a, p.b]);
+}
+
+fs.mkdirSync(path.join(process.cwd(), 'public'), { recursive: true });
+fs.writeFileSync(
+  path.join(process.cwd(), 'public/breeding-graph.json'),
+  JSON.stringify({ nodes: graphNodes, adj: graphAdj, childPairs }, null, 2)
+);
+
+console.log(`Generated ${pals.length} pals, ${passiveSkills.length} passives, ${combos.length} combos, graph with ${Object.keys(graphNodes).length} nodes`);
