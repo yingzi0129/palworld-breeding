@@ -51,8 +51,8 @@ export default function TermsPage() {
             <h2 className="mb-2 text-lg font-semibold text-white">5. Contact Us</h2>
             <p>
               If you have questions about these Terms, please contact us at{" "}
-              <a href="mailto:legal@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
-                legal@palworldbreeding.cc
+              <a href="mailto:support@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
+                support@palworldbreeding.cc
               </a>
               .
             </p>

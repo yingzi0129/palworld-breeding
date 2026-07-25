@@ -41,8 +41,8 @@ export default function CookiePolicyPage() {
             <h2 className="mb-2 text-lg font-semibold text-white">4. Contact Us</h2>
             <p>
               Questions? Email{" "}
-              <a href="mailto:privacy@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
-                privacy@palworldbreeding.cc
+              <a href="mailto:support@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
+                support@palworldbreeding.cc
               </a>
               .
             </p>

@@ -53,8 +53,8 @@ export default function PrivacyPage() {
             <h2 className="mb-2 text-lg font-semibold text-white">5. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, please contact us at{" "}
-              <a href="mailto:privacy@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
-                privacy@palworldbreeding.cc
+              <a href="mailto:support@palworldbreeding.cc" className="text-sky-400 hover:text-sky-300">
+                support@palworldbreeding.cc
               </a>
               .
             </p>
