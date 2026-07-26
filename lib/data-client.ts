@@ -44,7 +44,7 @@ export function getPalByInternalName(name: string): Pal | undefined {
 }
 
 export function getPalImageUrl(pal: Pal): string {
-  return `${CDN_BASE}/pals/${pal.slug}.webp`;
+  return `${CDN_BASE}/pals/${pal.slug}.webp?v=1`;
 }
 
 export function getElementClass(element: string): string {
