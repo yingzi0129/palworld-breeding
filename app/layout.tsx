@@ -72,6 +72,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        {/* Favicon for Google and browsers */}
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         {/* Privacy-friendly analytics by Plausible */}
         <script
           async
