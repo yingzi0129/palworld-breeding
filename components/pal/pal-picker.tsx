@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import Image from "next/image";
+import { useState, useMemo, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useId } from "react";
 import type { Pal } from "@/lib/types";
-import { getPalImageUrl } from "@/lib/data-client";
+import { usePalPickerPortal } from "./pal-picker-context";
 
 interface PalPickerProps {
   pals: Pal[];
@@ -13,22 +12,22 @@ interface PalPickerProps {
   placeholder?: string;
 }
 
-export function PalPicker({
-  pals,
-  selected,
-  onSelect,
-  label,
-  placeholder = "Search for a Pal...",
-}: PalPickerProps) {
+export interface PalPickerHandle {
+  close: () => void;
+}
+
+export const PalPicker = forwardRef<PalPickerHandle, PalPickerProps>(function PalPicker(
+  { pals, selected, onSelect, label, placeholder = "Search for a Pal..." },
+  ref
+) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const justSelectedRef = useRef(false);
-  const [dropdownStyle, setDropdownStyle] = useState<{ maxHeight: number }>({ maxHeight: 320 });
+  const pickerId = useId();
+  const { mount, unmount, activeKey, setActiveKey } = usePalPickerPortal();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -43,83 +42,72 @@ export function PalPicker({
       .slice(0, 20);
   }, [pals, query]);
 
-  const updateDropdownPosition = useCallback(() => {
-    if (!containerRef.current || !open) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const listMaxHeight = 320;
-    const padding = 8;
-    const spaceBelow = viewportHeight - rect.bottom - padding;
-    const spaceAbove = rect.top - padding;
-    let maxHeight = listMaxHeight;
-
-    if (spaceBelow < listMaxHeight && spaceAbove > spaceBelow) {
-      maxHeight = Math.max(140, Math.min(listMaxHeight, spaceAbove - padding));
-    } else {
-      maxHeight = Math.max(140, Math.min(listMaxHeight, spaceBelow));
+  const updatePortal = useCallback(() => {
+    if (!open || !containerRef.current) {
+      unmount();
+      return;
     }
-    setDropdownStyle({ maxHeight });
-  }, [open]);
-
-  useLayoutEffect(() => {
-    updateDropdownPosition();
-  }, [open, updateDropdownPosition]);
+    const anchor = containerRef.current.getBoundingClientRect();
+    mount({
+      anchor,
+      items: filtered.slice(0, 20),
+      highlightIndex,
+      onSelect: (pal) => {
+        justSelectedRef.current = true;
+        onSelect(pal);
+        setOpen(false);
+        setActiveKey(null);
+        setQuery("");
+        setHighlightIndex(0);
+        setTimeout(() => {
+          justSelectedRef.current = false;
+        }, 200);
+      },
+      onHighlight: (i) => setHighlightIndex(i),
+      onClose: () => {
+        setOpen(false);
+        setActiveKey(null);
+        inputRef.current?.blur();
+      },
+      noResults: filtered.length === 0,
+    });
+  }, [open, filtered, highlightIndex, mount, unmount, onSelect, setActiveKey]);
 
   useEffect(() => {
-    function handleResize() {
-      updateDropdownPosition();
-    }
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleResize, true);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleResize, true);
-    };
-  }, [updateDropdownPosition]);
+    updatePortal();
+    if (!open) unmount();
+  }, [open, updatePortal, unmount]);
+
+  useEffect(() => {
+    if (!open) return;
+    updatePortal();
+  }, [filtered, highlightIndex, open, updatePortal]);
 
   useEffect(() => {
     setHighlightIndex(0);
-    itemRefs.current = filtered.map(() => null);
   }, [filtered]);
 
-  useEffect(() => {
-    if (open && itemRefs.current[highlightIndex]) {
-      itemRefs.current[highlightIndex]?.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightIndex, open]);
+  useImperativeHandle(ref, () => ({
+    close: () => {
+      setOpen(false);
+      setActiveKey(null);
+    },
+  }));
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      const target = e.target as Node;
-      if (listRef.current && listRef.current.contains(target)) return;
-      if (containerRef.current && containerRef.current.contains(target)) return;
+    if (activeKey && activeKey !== pickerId && open) {
       setOpen(false);
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+  }, [activeKey, pickerId, open]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setQuery(e.target.value);
       if (selected) onSelect(null);
       setOpen(true);
+      setActiveKey(pickerId);
     },
-    [selected, onSelect]
-  );
-
-  const selectPal = useCallback(
-    (pal: Pal) => {
-      justSelectedRef.current = true;
-      onSelect(pal);
-      setOpen(false);
-      setQuery("");
-      setHighlightIndex(0);
-      setTimeout(() => {
-        justSelectedRef.current = false;
-      }, 200);
-    },
-    [onSelect]
+    [selected, onSelect, pickerId, setActiveKey]
   );
 
   const handleKeyDown = useCallback(
@@ -127,6 +115,7 @@ export function PalPicker({
       if (!open) {
         if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") {
           setOpen(true);
+          setActiveKey(pickerId);
         }
         return;
       }
@@ -142,89 +131,79 @@ export function PalPicker({
         case "Enter":
           e.preventDefault();
           if (filtered[highlightIndex]) {
-            selectPal(filtered[highlightIndex]);
+            const pal = filtered[highlightIndex];
+            justSelectedRef.current = true;
+            onSelect(pal);
+            setOpen(false);
+            setActiveKey(null);
+            setQuery("");
+            setHighlightIndex(0);
+            setTimeout(() => {
+              justSelectedRef.current = false;
+            }, 200);
           }
           break;
         case "Escape":
           setOpen(false);
+          setActiveKey(null);
           inputRef.current?.blur();
           break;
       }
     },
-    [open, filtered, highlightIndex, selectPal]
+    [open, filtered, highlightIndex, onSelect, pickerId, setActiveKey]
   );
 
   const handleInputFocus = useCallback(() => {
     if (justSelectedRef.current) return;
     setOpen(true);
-  }, []);
+    setActiveKey(pickerId);
+  }, [pickerId, setActiveKey]);
 
-  const handleInputMouseDown = useCallback(() => {
-    setOpen((prev) => !prev);
-  }, []);
+  const handleToggle = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen((prev) => {
+      const next = !prev;
+      setActiveKey(next ? pickerId : null);
+      return next;
+    });
+    if (!open) inputRef.current?.focus();
+  }, [open, pickerId, setActiveKey]);
+
+  const handleClear = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onSelect(null);
+    inputRef.current?.focus();
+  }, [onSelect]);
 
   const displayValue = selected ? selected.name : query;
 
-  const dropdown = open && (
-    <div
-      ref={listRef}
-      id="pal-picker-list"
-      className="pal-picker-dropdown scroll-thin absolute left-0 top-full z-50 mt-2 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
-      style={{
-        maxHeight: dropdownStyle.maxHeight,
-        width: "max-content",
-        maxWidth: "min(100vw - 2rem, 480px)",
-      }}
-    >
-      {filtered.length === 0 ? (
-        <div className="px-5 py-4 text-sm text-slate-500">No Pals found.</div>
-      ) : (
-        filtered.map((p, i) => {
-          const highlighted = i === highlightIndex;
-          return (
-            <button
-              key={p.internalName}
-              id={`pal-option-${i}`}
-              ref={(el: HTMLButtonElement | null) => { itemRefs.current[i] = el; }}
-              type="button"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => selectPal(p)}
-              onMouseEnter={() => setHighlightIndex(i)}
-              data-highlighted={highlighted}
-              className="pal-picker-option"
-            >
-              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-800">
-                <Image
-                  src={getPalImageUrl(p)}
-                  alt={p.name}
-                  fill
-                  className="object-contain p-1.5"
-                  sizes="56px"
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="pal-picker-option-name truncate text-lg font-semibold text-slate-200">{p.name}</div>
-                <div className="text-sm text-slate-500">
-                  #{p.number} · {p.elements.join(", ")}
-                </div>
-              </div>
-              {highlighted && (
-                <span className="text-sm text-slate-500">↵</span>
-              )}
-            </button>
-          );
-        })
-      )}
-    </div>
-  );
-
   return (
-    <div className="relative space-y-2 text-left" ref={containerRef}>
+    <div className="relative space-y-2 text-left" ref={containerRef} data-pal-picker={pickerId}>
       {label && (
         <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">{label}</label>
       )}
 
-      <div className="relative">
+      <div
+        className="relative"
+        onClick={(e) => {
+          const target = e.target as Node;
+          const inputEl = inputRef.current;
+          const buttonEls = inputEl?.parentElement?.querySelectorAll('button');
+          let isButton = false;
+          buttonEls?.forEach((b) => { if (b.contains(target)) isButton = true; });
+          if (!isButton) {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+            if (!open || activeKey !== pickerId) {
+              setOpen(true);
+              setActiveKey(pickerId);
+            }
+            inputRef.current?.focus();
+          }
+        }}
+      >
         <svg
           className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
           fill="none"
@@ -243,12 +222,15 @@ export function PalPicker({
           type="text"
           role="combobox"
           aria-expanded={open}
-          aria-controls="pal-picker-list"
+          aria-controls="pal-picker-portal-root"
           aria-activedescendant={open ? `pal-option-${highlightIndex}` : undefined}
           value={displayValue}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          onMouseDown={handleInputMouseDown}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleInputFocus();
+          }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="input pl-12 pr-10"
@@ -257,10 +239,7 @@ export function PalPicker({
         {selected ? (
           <button
             type="button"
-            onClick={() => {
-              onSelect(null);
-              inputRef.current?.focus();
-            }}
+            onClick={handleClear}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-xs text-slate-500 hover:bg-slate-700 hover:text-slate-300"
             aria-label="Clear selection"
           >
@@ -269,7 +248,7 @@ export function PalPicker({
         ) : (
           <button
             type="button"
-            onClick={() => setOpen((o) => !o)}
+            onClick={handleToggle}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-xs text-slate-500 hover:bg-slate-700 hover:text-slate-300"
             aria-label="Toggle suggestions"
             aria-expanded={open}
@@ -278,9 +257,8 @@ export function PalPicker({
           </button>
         )}
       </div>
-      {dropdown}
     </div>
   );
-}
+});
 
 export default PalPicker;

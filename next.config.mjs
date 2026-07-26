@@ -9,6 +9,9 @@ const nextConfig = {
     ],
   },
   trailingSlash: false,
+  async rewrites() {
+    return [];
+  },
 };
 
 export default nextConfig;

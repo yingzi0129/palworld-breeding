@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { PalPickerPortalProvider } from "@/components/pal/pal-picker-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -47,15 +48,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  verification: {
+    google: "2snR-HUr7mFwWQpcQtVqHGZp3R64Epmb_IYOcqx_VKk",
+  },
+  manifest: "/site.webmanifest",
   icons: {
     icon: [
+      { url: "/favicon.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.ico", sizes: "48x48" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: "/apple-touch-icon.png",
-    shortcut: "/favicon.ico",
   },
 };
 
@@ -66,10 +71,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Privacy-friendly analytics by Plausible */}
+        <script
+          async
+          src="https://plausible.shipsolo.io/js/pa-LUjWFhVU6zTFZ76X04q6W.js"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()',
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}>
-        <Header />
-        <div className="pt-16">{children}</div>
-        <Footer />
+        <PalPickerPortalProvider>
+          <Header />
+          <div className="pt-16">{children}</div>
+          <Footer />
+        </PalPickerPortalProvider>
       </body>
     </html>
   );
