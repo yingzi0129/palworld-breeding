@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
+import { ORG_NAME, SITE_NAME, SITE_URL } from "@/lib/site-config";
+
+const GUIDE_UPDATED = "2026-07-26";
 
 export const metadata: Metadata = {
   title: "Palworld Breeding Guide | PalworldBreeding.cc",
@@ -14,10 +18,54 @@ export const metadata: Metadata = {
 };
 
 export default function GuidePage() {
+  const guideUrl = `${SITE_URL}/guide`;
   return (
     <div className="min-h-screen bg-slate-950 py-10">
       <div className="mx-auto max-w-4xl px-4">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: "Palworld Breeding Guide",
+            description:
+              "A complete Palworld breeding guide: breeding power, special combos, passive skill inheritance, IVs, mutations, cakes, and legendary farming strategies.",
+            url: guideUrl,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": guideUrl,
+            },
+            image: {
+              "@type": "ImageObject",
+              url: "https://palworldbreeding.cc/favicon.png",
+              width: "512",
+              height: "512",
+            },
+            author: {
+              "@type": "Organization",
+              name: ORG_NAME,
+              url: SITE_URL,
+            },
+            publisher: {
+              "@type": "Organization",
+              name: ORG_NAME,
+              url: SITE_URL,
+              logo: {
+                "@type": "ImageObject",
+                url: "https://palworldbreeding.cc/favicon.png",
+                width: "512",
+                height: "512",
+              },
+            },
+            datePublished: "2026-07-01",
+            dateModified: GUIDE_UPDATED,
+          }}
+        />
         <h1 className="mb-4 text-2xl font-bold text-white md:text-3xl">Palworld Breeding Guide</h1>
+        <div className="mb-6 flex items-center gap-2 text-sm text-slate-400">
+          <span>By {SITE_NAME}</span>
+          <span>•</span>
+          <time dateTime={GUIDE_UPDATED}>Updated {GUIDE_UPDATED}</time>
+        </div>
         <p className="mb-8 text-slate-400">
           A practical, in-depth guide to breeding in Palworld, based on community research and game formulas. Last updated July 2026.
         </p>
@@ -132,19 +180,19 @@ export default function GuidePage() {
             <h2 className="mb-3 text-xl font-semibold text-white">Frequently Asked Questions</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-white">Can I breed any two Pals together?</h3>
+                <h3 className="mb-1 font-semibold text-white">Can I breed any two Pals together?</h3>
                 <p className="text-sm text-slate-400">Yes, almost any male and female Pal can be bred together, regardless of species or element. The child is determined by Breeding Power.</p>
               </div>
               <div>
-                <h3 className="font-semibold text-white">Why is my child a different Pal than expected?</h3>
+                <h3 className="mb-1 font-semibold text-white">Why is my child a different Pal than expected?</h3>
                 <p className="text-sm text-slate-400">The game rounds the averaged Breeding Power to the nearest available Pal. Small differences in parent power can shift the result to a neighboring Pal.</p>
               </div>
               <div>
-                <h3 className="font-semibold text-white">Do parent levels matter?</h3>
+                <h3 className="mb-1 font-semibold text-white">Do parent levels matter?</h3>
                 <p className="text-sm text-slate-400">No, parent levels do not affect the child’s species or base stats. Only Breeding Power, passive skills, and IVs matter.</p>
               </div>
               <div>
-                <h3 className="font-semibold text-white">How do I get the best passive skills?</h3>
+                <h3 className="mb-1 font-semibold text-white">How do I get the best passive skills?</h3>
                 <p className="text-sm text-slate-400">Catch wild parents that already have the passives you want, then breed them together. Both parents should carry the target skill for the best odds.</p>
               </div>
             </div>

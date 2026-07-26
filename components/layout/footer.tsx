@@ -6,6 +6,7 @@ const footerLinks = {
     { label: "Pal List", href: "/pals" },
     { label: "Map", href: "/map" },
     { label: "Guide", href: "/guide" },
+    { label: "About", href: "/about" },
   ],
   legal: [
     { label: "Terms of Service", href: "/terms" },

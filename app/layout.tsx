@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { PalPickerPortalProvider } from "@/components/pal/pal-picker-context";
+import { JsonLd } from "@/components/json-ld";
+import { ORG_LOGO_URL, ORG_NAME, SITE_NAME, SITE_SAME_AS, SITE_TAGLINE, SITE_URL } from "@/lib/site-config";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -85,6 +87,38 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html:
               'window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()',
+          }}
+        />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: SITE_URL,
+            description: SITE_TAGLINE,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: `${SITE_URL}/pals?q={search_term_string}`,
+              },
+              "query-input": "required name=search_term_string",
+            },
+          }}
+        />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: ORG_NAME,
+            url: SITE_URL,
+            logo: {
+              "@type": "ImageObject",
+              url: ORG_LOGO_URL,
+              width: "512",
+              height: "512",
+            },
+            sameAs: SITE_SAME_AS,
           }}
         />
       </head>

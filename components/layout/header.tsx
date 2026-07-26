@@ -8,6 +8,7 @@ const nav = [
   { label: "Map", href: "/map" },
   { label: "Guide", href: "/guide" },
   { label: "Pals", href: "/pals" },
+  { label: "About", href: "/about" },
 ];
 
 const tools = [
