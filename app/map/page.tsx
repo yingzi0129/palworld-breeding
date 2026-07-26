@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPals } from "@/lib/data-server";
+import { getPals, getSpawnMap } from "@/lib/data-server";
 
 export const metadata: Metadata = {
   title: "Interactive Palworld Map | PalworldBreeding.cc",
@@ -20,6 +20,7 @@ const MapClient = dynamic(() => import("@/components/map/map-client").then((m) =
 
 export default function MapPage() {
   const pals = getPals();
+  const spawnMap = getSpawnMap();
   return (
     <div className="min-h-screen bg-slate-950 py-6">
       <div className="mx-auto max-w-7xl px-4">
@@ -29,7 +30,7 @@ export default function MapPage() {
             Filter spawn points by Pal. Fast travel, bosses, and resource nodes are shown for reference.
           </p>
         </div>
-        <MapClient pals={pals} />
+        <MapClient pals={pals} spawnMap={spawnMap} />
         <p className="mt-2 text-xs text-slate-600">
           Map image by{" "}
           <a href="https://github.com/Kregap/palworld-map" className="underline hover:text-slate-400">

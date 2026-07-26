@@ -5,6 +5,7 @@ import type { Pal, PassiveSkill, BreedingCombo } from './types';
 let palsCache: Pal[] | null = null;
 let passivesCache: PassiveSkill[] | null = null;
 let combosCache: BreedingCombo[] | null = null;
+let spawnsCache: Record<string, { x: number; y: number; region: string; note: string }[]> | null = null;
 
 export function getPals(): Pal[] {
   if (palsCache) return palsCache;
@@ -37,6 +38,13 @@ export function getBreedingCombos(): BreedingCombo[] {
     isSpecial: !!c.special,
   }));
   return combosCache;
+}
+
+export function getSpawnMap(): Record<string, { x: number; y: number; region: string; note: string }[]> {
+  if (spawnsCache) return spawnsCache;
+  const raw = fs.readFileSync(path.join(process.cwd(), 'data/spawns.json'), 'utf-8');
+  spawnsCache = JSON.parse(raw) as Record<string, { x: number; y: number; region: string; note: string }[]>;
+  return spawnsCache;
 }
 
 export function getPalBySlug(slug: string): Pal | undefined {

@@ -8,75 +8,40 @@ import Image from "next/image";
 
 interface Props {
   pals: Pal[];
+  spawnMap: Record<string, { x: number; y: number; region: string; note: string }[]>;
+  fastTravel?: { x: number; y: number; name: string }[];
 }
 
-const SPAWN_POINTS: Record<string, { x: number; y: number; region: string; note: string }[]> = {
-  anubis: [
-    { x: 132, y: 93, region: "Twilight Dunes", note: "Desert temple boss area" },
-    { x: 134, y: 95, region: "Twilight Dunes", note: "Alpha spawn" },
-  ],
-  jetragon: [
-    { x: 244, y: 122, region: "Mount Obsidian", note: "Flying around volcano" },
-    { x: 246, y: 124, region: "Mount Obsidian", note: "Alpha spawn" },
-  ],
-  frostallion: [
-    { x: 357, y: 117, region: "Astral Mountains", note: "Snowfield north-west" },
-    { x: 355, y: 115, region: "Astral Mountains", note: "Alpha spawn" },
-  ],
-  shadowbeak: [
-    { x: 372, y: 137, region: "Volcano Islands", note: "Nocturnus Mine area" },
-    { x: 370, y: 135, region: "Volcano Islands", note: "Alpha spawn" },
-  ],
-  lamball: [
-    { x: 175, y: 90, region: "Windswept Hills", note: "Starter area" },
-    { x: 173, y: 88, region: "Windswept Hills", note: "Common spawn" },
-  ],
-  relaxaurus: [
-    { x: 202, y: 96, region: "Ascetic Falls", note: "River area" },
-    { x: 200, y: 94, region: "Ascetic Falls", note: "Common spawn" },
-  ],
-  mossanda: [
-    { x: 188, y: 108, region: "Eastern Wild Island", note: "Forest area" },
-    { x: 186, y: 106, region: "Eastern Wild Island", note: "Common spawn" },
-  ],
-  lyleen: [
-    { x: 195, y: 105, region: "Verdant Brook", note: "Daytime only" },
-    { x: 193, y: 103, region: "Verdant Brook", note: "Common spawn" },
-  ],
-  penking: [
-    { x: 180, y: 100, region: "Ice Wind Island", note: "Cold shoreline" },
-    { x: 178, y: 98, region: "Ice Wind Island", note: "Common spawn" },
-  ],
-  bushi: [
-    { x: 210, y: 110, region: "Bamboo Grove", note: "Bamboo forest" },
-    { x: 208, y: 108, region: "Bamboo Grove", note: "Common spawn" },
-  ],
-};
-
-const FAST_TRAVEL = [
-  { x: 175, y: 90, name: "Windswept Hills" },
-  { x: 185, y: 105, name: "Eastern Wild Island" },
-  { x: 240, y: 120, name: "Beach of Everlasting Summer" },
-  { x: 350, y: 110, name: "Astral Mountains" },
+const FAST_TRAVEL: { x: number; y: number; name: string }[] = [
+  { x: 22.46, y: 68.38, name: "Windswept Hills" },
+  { x: 61.98, y: 57.58, name: "Eastern Wild Island" },
+  { x: 74.00, y: 62.00, name: "Beach of Everlasting Summer" },
+  { x: 35.00, y: 61.00, name: "Astral Mountains" },
+  { x: 19.00, y: 51.00, name: "Twilight Dunes" },
+  { x: 67.00, y: 46.00, name: "Bamboo Grove" },
+  { x: 54.00, y: 46.00, name: "Ascetic Falls" },
+  { x: 58.00, y: 53.00, name: "Ice Wind Island" },
 ];
 
 function worldToPercent(x: number, y: number) {
   return {
-    left: `${50 + (x / 500) * 50}%`,
-    top: `${50 - (y / 500) * 50}%`,
+    left: `${x}%`,
+    top: `${y}%`,
   };
 }
 
-export function MapClient({ pals }: Props) {
+export function MapClient({ pals, spawnMap, fastTravel }: Props) {
   const [selectedPal, setSelectedPal] = useState<Pal | null>(null);
   const [showFastTravel, setShowFastTravel] = useState(true);
   const [hovered, setHovered] = useState<{ type: "pal" | "ft"; index: number } | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const ftPoints = useMemo(() => fastTravel || FAST_TRAVEL, [fastTravel]);
+
   const points = useMemo(() => {
     if (!selectedPal) return [];
-    return selectedPal.spawnLocations || SPAWN_POINTS[selectedPal.slug] || [];
-  }, [selectedPal]);
+    return spawnMap[selectedPal.slug] || [];
+  }, [selectedPal, spawnMap]);
 
   const handleMarkerClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -119,7 +84,7 @@ export function MapClient({ pals }: Props) {
         </div>
 
         {showFastTravel &&
-          FAST_TRAVEL.map((ft, i) => {
+          ftPoints.map((ft, i) => {
             const pos = worldToPercent(ft.x, ft.y);
             return (
               <button
@@ -160,7 +125,7 @@ export function MapClient({ pals }: Props) {
         {hovered?.type === "ft" && (
           <div className="absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
           >
-            Fast Travel: {FAST_TRAVEL[hovered.index].name}
+            Fast Travel: {ftPoints[hovered.index].name}
           </div>
         )}
 
@@ -204,5 +169,3 @@ export function MapPopupCard({ pal }: { pal: Pal }) {
     </div>
   );
 }
-
-export { SPAWN_POINTS };
