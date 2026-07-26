@@ -33,11 +33,33 @@ export function PalsListClient({ pals }: PalsListClientProps) {
   return (
     <div className="min-h-screen bg-[#020617] py-10">
       <div className="mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-10">
+        <div className="mb-6">
           <h1 className="font-display text-3xl font-bold text-white md:text-4xl">Complete Pal List</h1>
           <p className="mt-2 text-slate-400">
             Browse all {pals.length} Pals in Palworld. Filter by element, search by name, and click any card to see breeding combos, stats, and locations.
           </p>
+        </div>
+
+        {/* Tool shortcuts */}
+        <div className="mb-10 grid gap-3 sm:grid-cols-3">
+          <ToolShortcut
+            href="/tools/shortest-path"
+            title="Shortest Path"
+            description="Find the fastest breeding route to any Pal."
+            accent="red"
+          />
+          <ToolShortcut
+            href="/tools/passive-skill"
+            title="Passive Skill Odds"
+            description="Calculate inheritance probability for skills."
+            accent="blue"
+          />
+          <ToolShortcut
+            href="/map"
+            title="Spawn Map"
+            description="Find where every Pal spawns in the wild."
+            accent="emerald"
+          />
         </div>
 
         <div className="mb-6">
@@ -105,6 +127,37 @@ export function PalsListClient({ pals }: PalsListClientProps) {
         )}
       </div>
     </div>
+  );
+}
+
+function ToolShortcut({
+  href,
+  title,
+  description,
+  accent,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  accent: "red" | "blue" | "emerald" | "purple";
+}) {
+  const accentClasses = {
+    red: "border-red-500/30 bg-red-500/10 text-red-400 hover:border-red-500/60",
+    blue: "border-blue-500/30 bg-blue-500/10 text-blue-400 hover:border-blue-500/60",
+    emerald: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:border-emerald-500/60",
+    purple: "border-purple-500/30 bg-purple-500/10 text-purple-400 hover:border-purple-500/60",
+  };
+  return (
+    <Link
+      href={href}
+      className={`block rounded-xl border p-4 transition-all hover:-translate-y-0.5 ${accentClasses[accent]}`}
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="font-display text-sm font-bold text-white">{title}</h3>
+        <span className="text-sm">→</span>
+      </div>
+      <p className="mt-1 text-xs text-slate-400">{description}</p>
+    </Link>
   );
 }
 

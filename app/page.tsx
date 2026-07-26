@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { getPals } from "@/lib/data-server";
+import { getPals, getPalBySlug } from "@/lib/data-server";
+import { getPalImageUrl, rarityColor, rarityLabel } from "@/lib/data-client";
+import type { Pal } from "@/lib/types";
 import { Tabs } from "@/components/ui/tabs";
 import { ForwardCalculator } from "@/components/calculator/forward-calculator";
 import { ReverseCalculator } from "@/components/calculator/reverse-calculator";
@@ -16,6 +18,17 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   const pals = getPals();
+
+  const popularPals = [
+    "anubis",
+    "jetdragon",
+    "icehorse",
+    "blackgriffon",
+    "darkscorpion",
+    "suzaku",
+  ]
+    .map((slug) => getPalBySlug(slug))
+    .filter((pal): pal is Pal => Boolean(pal));
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#020617]">
@@ -129,6 +142,39 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Popular Pals */}
+        <section className="mx-auto max-w-[1440px] px-6 py-16 md:px-12 md:py-20">
+          <div className="mb-10 flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-2xl font-bold tracking-tight text-white md:text-3xl">
+                Popular Pals
+              </h2>
+              <p className="mt-2 text-slate-400">
+                Jump straight to high-value Pals players are breeding most often.
+              </p>
+            </div>
+            <Link
+              href="/pals"
+              className="hidden text-sm font-semibold text-red-500 hover:text-red-400 sm:inline-block"
+            >
+              View all Pals →
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {popularPals.map((pal) => (
+              <PopularPalCard key={pal.internalName} pal={pal} />
+            ))}
+          </div>
+          <div className="mt-6 text-center sm:hidden">
+            <Link
+              href="/pals"
+              className="inline-block text-sm font-semibold text-red-500 hover:text-red-400"
+            >
+              View all Pals →
+            </Link>
           </div>
         </section>
 
@@ -299,6 +345,31 @@ function Step({ number, title, description }: { number: number; title: string; d
       <h4 className="mb-2 text-lg font-bold text-white">{title}</h4>
       <p className="text-sm text-slate-400">{description}</p>
     </div>
+  );
+}
+
+function PopularPalCard({ pal }: { pal: Pal }) {
+  return (
+    <Link
+      href={`/pal/${pal.slug}`}
+      className="group flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition-all hover:-translate-y-0.5 hover:border-slate-600"
+    >
+      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-slate-800/60">
+        <Image
+          src={getPalImageUrl(pal)}
+          alt={pal.name}
+          fill
+          className="object-contain p-2 transition group-hover:scale-110"
+          sizes="64px"
+        />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-slate-500">#{pal.number}</p>
+        <h3 className="font-display text-lg font-bold text-white truncate">{pal.name}</h3>
+        <p className={`text-xs font-medium ${rarityColor(pal.rarity)}`}>{rarityLabel(pal.rarity)}</p>
+      </div>
+      <span className="text-sm text-slate-500 group-hover:text-red-400">→</span>
+    </Link>
   );
 }
 
