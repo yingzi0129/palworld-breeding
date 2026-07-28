@@ -10,9 +10,9 @@ import { ForwardCalculator } from "@/components/calculator/forward-calculator";
 import { ReverseCalculator } from "@/components/calculator/reverse-calculator";
 
 export const metadata: Metadata = {
-  title: "Palworld Breeding Calculator & Interactive Map | PalworldBreeding.cc",
+  title: "Palworld Breeding Calculator & Map | PalworldBreeding",
   description:
-    "Plan your perfect Pal the easy way. Calculate combos, optimize passive skill inheritance, find the shortest breeding path, and track spawn locations — all in one friendly spot.",
+    "Plan your perfect Pal with PalworldBreeding. Calculate combos, optimize passive skills, find the shortest breeding path, and track spawn locations.",
   alternates: { canonical: "/" },
 };
 
@@ -61,22 +61,20 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-12 bottom-0 hidden opacity-[0.18] mix-blend-screen blur-[2px] brightness-110 lg:block xl:-left-6">
             <Image
               src="/images/hero/frostallion.webp"
-              alt=""
+              alt="Frostallion legendary Pal"
               width={420}
               height={420}
               className="h-auto w-[18rem] xl:w-[22rem]"
-              aria-hidden="true"
               priority
             />
           </div>
           <div className="pointer-events-none absolute -right-10 bottom-0 hidden opacity-[0.20] mix-blend-screen blur-[1px] brightness-110 lg:block xl:-right-4">
             <Image
               src="/images/hero/jetragon.webp"
-              alt=""
+              alt="Jetragon legendary Pal"
               width={460}
               height={460}
               className="h-auto w-[20rem] xl:w-[24rem]"
-              aria-hidden="true"
               priority
             />
           </div>
@@ -111,6 +109,10 @@ export default function HomePage() {
             </h1>
             <p className="mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-slate-300 drop-shadow md:text-xl">
               Plan your perfect Pal the easy way. Calculate combos, optimize passive skill inheritance, find the shortest breeding path, and track spawn locations — all in one friendly spot.
+            </p>
+
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-slate-400 drop-shadow">
+              PalworldBreeding is a fan-made companion for trainers who want to master Palworld breeding. Whether you are chasing a legendary Pal or optimizing passive skill inheritance, our free breeding calculator, combo database, and interactive spawn map give you the data you need without the guesswork.
             </p>
 
             {/* Game-style stat capsules with SVG icons */}
@@ -273,6 +275,12 @@ export default function HomePage() {
                 <p>
                   This system allows players to &quot;breed up&quot; from common Pals like Cattiva or Lamball into massive beasts like Anubis or Faleris. It&apos;s the primary way to optimize stat growth and ensure your Pals have the strongest combat or base-working passive skills.
                 </p>
+                <p>
+                  The core math behind every Palworld breeding combo is straightforward once you understand the breeding power formula, but with hundreds of Pals and thousands of possible pairings, manual planning becomes exhausting fast. PalworldBreeding handles the calculation for you, showing exactly which parents produce your target Pal and whether a shorter path exists through intermediate Pals.
+                </p>
+                <p>
+                  Passive skills add another layer of strategy. Traits like Legend, Musclehead, Ferocious, and Artisan can dramatically change how a Pal performs in combat or at your base. By choosing parents with the right skills and checking inheritance odds before you commit resources, you can hatch offspring that fit your build instead of relying on luck.
+                </p>
               </div>
             </article>
 
@@ -287,6 +295,12 @@ export default function HomePage() {
                 <p>
                   We also integrate spawn data, so if you&apos;re missing a parent we can point you to the exact map location where they roam in the wild, saving hours of exploration.
                 </p>
+                <p>
+                  PalworldBreeding is designed around speed and clarity. The forward breeding calculator instantly tells you the result of pairing any two Pals, while the reverse breeding calculator works backwards from your target and finds the shortest possible route. Combined with the interactive Palworld spawn map, you can move from planning to capture to breeding without switching between tabs or spreadsheets.
+                </p>
+                <p>
+                  Every calculation is powered by up-to-date game data and community-verified breeding formulas, so you can trust the results whether you are breeding for PvP, base automation, or simply collecting your favorite Pals.
+                </p>
               </div>
             </article>
 
@@ -294,6 +308,13 @@ export default function HomePage() {
               <h2 className="mb-4 font-display text-2xl font-bold text-white">Is this official?</h2>
               <p className="leading-relaxed text-slate-400">
                 No. This is a fan-made project created by and for the Palworld community. We are players who wanted better tools for tracking complex breeding chains and skill inheritance odds. Our data is sourced from game files and community testing to ensure high accuracy.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/5 to-slate-900/50 p-8 text-center backdrop-blur-sm">
+              <h2 className="mb-3 font-display text-2xl font-bold text-white">Start Planning Your Perfect Pal Team</h2>
+              <p className="mx-auto max-w-2xl leading-relaxed text-slate-400">
+                PalworldBreeding is updated regularly with new Pals, combos, and map data as the game evolves. Bookmark the site, share it with your friends, and keep using the Palworld breeding calculator to build stronger, faster, and more efficient Pals.
               </p>
             </div>
           </div>
