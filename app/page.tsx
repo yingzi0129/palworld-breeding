@@ -112,7 +112,7 @@ export default function HomePage() {
             </p>
 
             <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-slate-400 drop-shadow">
-              PalworldBreeding is a fan-made companion for trainers who want to master Palworld breeding. Whether you are chasing a legendary Pal or optimizing passive skill inheritance, our free breeding calculator, combo database, and interactive spawn map give you the data you need without the guesswork.
+              PalworldBreeding is a fan-made companion for trainers who want to master Palworld breeding. Whether you are chasing a legendary Pal, optimizing passive skill inheritance, or searching for the perfect parents on the interactive spawn map, our free Palworld breeding calculator, combo database, and path-finding tools give you the data you need without the guesswork.
             </p>
 
             {/* Game-style stat capsules with SVG icons */}
@@ -263,64 +263,66 @@ export default function HomePage() {
 
         {/* FAQ / SEO content */}
         <section className="mx-auto max-w-4xl px-6 py-20 md:py-28">
-          <div className="space-y-16">
-            <article>
-              <h2 className="mb-6 border-l-4 border-red-500 pl-6 font-display text-2xl font-bold text-white md:text-3xl">
-                What is Palworld breeding?
-              </h2>
-              <div className="space-y-4 leading-relaxed text-slate-400">
-                <p>
-                  Breeding in Palworld is a deep mechanics-driven system where you pair two different (or identical) Pals in a Breeding Farm to produce an egg. Every Pal has a hidden power level value. When two parents are bred, their values are averaged to determine the resulting offspring.
-                </p>
-                <p>
-                  This system allows players to &quot;breed up&quot; from common Pals like Cattiva or Lamball into massive beasts like Anubis or Faleris. It&apos;s the primary way to optimize stat growth and ensure your Pals have the strongest combat or base-working passive skills.
-                </p>
-                <p>
-                  The core math behind every Palworld breeding combo is straightforward once you understand the breeding power formula, but with hundreds of Pals and thousands of possible pairings, manual planning becomes exhausting fast. PalworldBreeding handles the calculation for you, showing exactly which parents produce your target Pal and whether a shorter path exists through intermediate Pals.
-                </p>
-                <p>
-                  Passive skills add another layer of strategy. Traits like Legend, Musclehead, Ferocious, and Artisan can dramatically change how a Pal performs in combat or at your base. By choosing parents with the right skills and checking inheritance odds before you commit resources, you can hatch offspring that fit your build instead of relying on luck.
-                </p>
-              </div>
-            </article>
+          <div className="mb-10 text-center">
+            <h2 className="font-display text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+              Frequently Asked Questions
+            </h2>
+            <p className="mt-3 text-slate-400">
+              Quick answers to help you get the most out of PalworldBreeding.
+            </p>
+          </div>
 
-            <article>
-              <h2 className="mb-6 border-l-4 border-red-500 pl-6 font-display text-2xl font-bold text-white md:text-3xl">
-                How does this calculator differ from basic combo tools?
-              </h2>
-              <div className="space-y-4 leading-relaxed text-slate-400">
-                <p>
-                  Unlike standard list-based tools, PalworldBreeding.cc utilizes dynamic path-finding. If you want a specific Pal but don&apos;t have the parents, our reverse search will show you every possible combination, including secondary and tertiary breeding steps.
-                </p>
-                <p>
-                  We also integrate spawn data, so if you&apos;re missing a parent we can point you to the exact map location where they roam in the wild, saving hours of exploration.
-                </p>
-                <p>
-                  PalworldBreeding is designed around speed and clarity. The forward breeding calculator instantly tells you the result of pairing any two Pals, while the reverse breeding calculator works backwards from your target and finds the shortest possible route. Combined with the interactive Palworld spawn map, you can move from planning to capture to breeding without switching between tabs or spreadsheets.
-                </p>
-                <p>
-                  Every calculation is powered by up-to-date game data and community-verified breeding formulas, so you can trust the results whether you are breeding for PvP, base automation, or simply collecting your favorite Pals.
-                </p>
-              </div>
-            </article>
+          <p className="mb-12 text-center leading-relaxed text-slate-400">
+            New to Palworld breeding or looking for the fastest way to build your dream team? The PalworldBreeding calculator and spawn map are built to simplify every step, from picking the right parents to hatching Pals with powerful passive skills. Browse the questions below to learn how the breeding power formula, reverse search, and interactive map work together.
+          </p>
 
-            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/50 p-8 backdrop-blur-sm">
-              <h2 className="mb-4 font-display text-2xl font-bold text-white">Is this official?</h2>
-              <p className="leading-relaxed text-slate-400">
-                No. This is a fan-made project created by and for the Palworld community. We are players who wanted better tools for tracking complex breeding chains and skill inheritance odds. Our data is sourced from game files and community testing to ensure high accuracy.
-              </p>
-            </div>
+          <div className="space-y-10">
+            <FaqItem
+              question="What is Palworld breeding?"
+              answer="Breeding in Palworld is a mechanics-driven system where you pair two Pals in a Breeding Farm to produce an egg. Every Pal has a hidden breeding power value, and the offspring is determined by averaging the parents' values. This lets players start with common Pals like Cattiva or Lamball and work their way up toward powerful creatures like Anubis or Faleris. Whether you are a new player or an experienced breeder, understanding this core loop is the first step to building stronger Pals."
+            />
+            <FaqItem
+              question="How does breeding power decide the offspring?"
+              answer="Each Pal has a hidden power value that determines where it sits in the breeding chain. When two parents are bred, their values are averaged, and the result maps to the closest matching Pal. Understanding this breeding power formula is the key to predicting results, but with hundreds of Pals and thousands of possible pairings, manual planning becomes exhausting quickly. PalworldBreeding handles the math instantly and shows you the exact result for any combination."
+            />
+            <FaqItem
+              question="Why do passive skills matter in breeding?"
+              answer="Passive skills can completely change how a Pal performs in combat or at your base. Traits like Legend, Musclehead, Ferocious, and Artisan are highly valuable, but they are inherited with specific odds. The PalworldBreeding calculator shows passive skill inheritance probability so you can choose parents that give you the best chance of hatching the build you want. This is especially important when you are breeding for PvP, boss fights, or base automation, where the right skills can save hours of grinding."
+            />
+            <FaqItem
+              question="What makes the PalworldBreeding calculator different?"
+              answer="Most tools only show simple parent-to-child combos. PalworldBreeding combines a forward calculator, a reverse calculator, and dynamic path-finding. You can pick any target Pal and see every possible combination, including secondary and tertiary steps, so you always know the most efficient route to build your team. Instead of memorizing spreadsheets, you can focus on catching parents and hatching the perfect egg."
+            />
+            <FaqItem
+              question="How does the spawn map help me breed faster?"
+              answer="Finding the right parents is often the hardest part of breeding. The PalworldBreeding interactive spawn map points you to the exact coordinates and habitats where each Pal appears in the wild. Instead of wandering the archipelago hoping for a rare spawn, you can go straight to the location, catch the parent, and start breeding. The map is synced with our combo data, so once you know which parents you need, you can find them without leaving the site."
+            />
+            <FaqItem
+              question="Is this an official Palworld tool?"
+              answer="No. PalworldBreeding is a fan-made project created by players for the Palworld community. We are not affiliated with Pocketpair, Inc. Our data is sourced from game files and community testing to keep the calculator, combo database, and spawn map as accurate as possible. We update the site regularly as the game evolves, so you can trust the results when planning your next breed."
+            />
+          </div>
 
-            <div className="rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/5 to-slate-900/50 p-8 text-center backdrop-blur-sm">
-              <h2 className="mb-3 font-display text-2xl font-bold text-white">Start Planning Your Perfect Pal Team</h2>
-              <p className="mx-auto max-w-2xl leading-relaxed text-slate-400">
-                PalworldBreeding is updated regularly with new Pals, combos, and map data as the game evolves. Bookmark the site, share it with your friends, and keep using the Palworld breeding calculator to build stronger, faster, and more efficient Pals.
-              </p>
-            </div>
+          <div className="mt-16 rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/5 to-slate-900/50 p-8 text-center backdrop-blur-sm">
+            <h2 className="mb-3 font-display text-2xl font-bold text-white">Start Planning Your Perfect Pal Team</h2>
+            <p className="mx-auto max-w-2xl leading-relaxed text-slate-400">
+              PalworldBreeding is updated regularly with new Pals, combos, and map data as the game evolves. Bookmark the site, share it with your friends, and keep using the Palworld breeding calculator to explore breeding combos, check passive skill inheritance, and find the shortest path to your favorite legendary Pals.
+            </p>
           </div>
         </section>
       </main>
     </div>
+  );
+}
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <article>
+      <h3 className="mb-3 border-l-4 border-red-500 pl-6 font-display text-xl font-bold text-white md:text-2xl">
+        {question}
+      </h3>
+      <p className="pl-6 leading-relaxed text-slate-400">{answer}</p>
+    </article>
   );
 }
 
